@@ -86,7 +86,8 @@ class _DetailsScreenState extends State<DetailsScreen> {
                         ),
                         const SizedBox(height: 15),
                         Padding(
-                          padding: const EdgeInsets.only(left: 15.0),
+                          padding:
+                              const EdgeInsets.only(left: 15.0, right: 15.0),
                           child: Text(
                             st.StringUtils.capitalize(
                                 _csvData[selectedIndex][2]
@@ -100,11 +101,11 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                 overflow: TextOverflow.ellipsis),
                           ),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         csvDataView(
                             title: "Product ID: ",
                             data: _csvData[selectedIndex][0].toString()),
-                        const SizedBox(height: 15),
+                        const SizedBox(height: 10),
                         csvDataView(
                             title: "Category ID: ",
                             data: _csvData[selectedIndex][1].toString()),
@@ -117,15 +118,16 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                 fontSize: 18, fontWeight: FontWeight.w500),
                           ),
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 15),
                         GridView.builder(
                           shrinkWrap: true,
                           itemCount: _related.length,
                           physics: const BouncingScrollPhysics(),
                           scrollDirection: Axis.vertical,
+                          padding: const EdgeInsets.only(bottom: 60),
                           gridDelegate:
                               SliverGridDelegateWithMaxCrossAxisExtent(
-                            childAspectRatio: 0.77,
+                            childAspectRatio: 0.79,
                             maxCrossAxisExtent: screenSize.width * 0.5,
                             crossAxisSpacing: 0,
                             mainAxisSpacing: 0,
@@ -137,6 +139,11 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                       builder: (context) => DetailsTwo(
                                           selectedImage: images(
                                               _related[index][2].toString()),
+                                          title: st.StringUtils.capitalize(
+                                              _csvData[selectedIndex][2]
+                                                  .toString()
+                                                  .replaceAll(".", " "),
+                                              allWords: true),
                                           pID: _related[index][0].toString(),
                                           cID: _related[index][1].toString(),
                                           related: _related))),
@@ -240,19 +247,81 @@ class _DetailsScreenState extends State<DetailsScreen> {
                         ),
                       ]),
                 ),
+                Positioned(
+                    bottom: 0,
+                    child: Container(
+                      height: 54,
+                      width: screenSize.width,
+                      color: Colors.white,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.calendar_view_day),
+                          const SizedBox(width: 20),
+                          const Icon(Icons.favorite_outline),
+                          const SizedBox(width: 20),
+                          const Icon(Icons.comment_outlined),
+                          const SizedBox(width: 20),
+                          GestureDetector(
+                            onTap: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      duration: Duration(seconds: 1),
+                                      backgroundColor: Colors.green,
+                                      content: Text("Success")));
+                            },
+                            child: Container(
+                              height: 56,
+                              width: screenSize.width * 0.3,
+                              alignment: Alignment.center,
+                              color: Colors.pink.shade100,
+                              child: const Text(
+                                "Buy Now",
+                                style: TextStyle(
+                                    fontSize: 15, fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      duration: Duration(seconds: 1),
+                                      backgroundColor: Colors.green,
+                                      content: Text("Added To Cart!")));
+                            },
+                            child: Container(
+                              height: 56,
+                              width: screenSize.width * 0.3,
+                              alignment: Alignment.center,
+                              color: Colors.red,
+                              child: const Text(
+                                "Add To Cart",
+                                style: TextStyle(
+                                    fontSize: 15, fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ))
               ]),
       ),
-      floatingActionButton: FloatingActionButton(
-          child: const Icon(Icons.sync),
-          onPressed: () async {
-            _csvData.clear();
-            setState(() {});
-            _related.clear();
-            Future.delayed(const Duration(milliseconds: 200)).then((_) {
-              readCSVFile();
-              generateRandomNumber();
-            });
-          }),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 46.0),
+        child: FloatingActionButton(
+            child: const Icon(Icons.sync),
+            onPressed: () async {
+              _csvData.clear();
+              setState(() {});
+              _related.clear();
+              Future.delayed(const Duration(milliseconds: 200)).then((_) {
+                readCSVFile();
+                generateRandomNumber();
+              });
+            }),
+      ),
     );
   }
 
