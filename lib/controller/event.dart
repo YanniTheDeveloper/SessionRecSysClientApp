@@ -4,17 +4,16 @@ import 'package:flutter/foundation.dart';
 class EventProvider with ChangeNotifier {
   List<Event> _events = [];
   List<Event> get event => [..._events];
-  List _cartItems = [];
+  List<Event> _cartItems = [];
 
-  List get cartItem => [...cartItem];
+  List<Event> get cartItem => [..._cartItems];
 
   int get cartCount {
     return _cartItems.length;
   }
 
   void viewProduct(
-      {
-      required String productId,
+      {required String productId,
       required String categoryId,
       required String categoryCode,
       required double price,
@@ -31,8 +30,7 @@ class EventProvider with ChangeNotifier {
   }
 
   void purchaseProduct(
-      {
-      required String productId,
+      {required String productId,
       required String categoryId,
       required String categoryCode,
       required double price,
@@ -62,7 +60,7 @@ class EventProvider with ChangeNotifier {
         categoryId: categoryId,
         categoryCode: categoryCode,
         brand: brand,
-        eventType: EventType.cart,
+        eventType: EventType.remove_from_cart,
         eventTime: DateTime.now(),
         price: price));
   }

@@ -65,15 +65,27 @@ class _HomePageState extends State<HomePage> {
         foregroundColor: Colors.black,
         title: const Text("Products"),
         actions: [
-          IconButton(
-              onPressed: () {
-                Provider.of<EventProvider>(context, listen: false)
-                    .event
-                    .forEach((element) {
-                  print(element);
-                });
-              },
-              icon: Icon(Icons.abc))
+          // IconButton(
+          //     onPressed: () {
+          //       var events = [];
+          //       Provider.of<EventProvider>(context, listen: false)
+          //           .event
+          //           .forEach((element) {
+          //         events.add({
+          //           "productId": element.productId,
+          //           "categoryId": element.categoryId,
+          //           "categoryCode": element.categoryCode,
+          //           "eventType": element.eventType,
+          //           "price": element.price,
+          //           "brand": element.brand,
+          //           "eventTime": element.eventTime,
+          //           "userId": element.userId,
+          //           "userSession": element.userSession
+          //         });
+          //       });
+          //       print(events);
+          //     },
+          //     icon: Icon(Icons.abc))
         ],
       ),
       body: SafeArea(

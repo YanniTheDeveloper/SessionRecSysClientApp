@@ -1,5 +1,6 @@
 import 'package:basic_utils/basic_utils.dart';
 import 'package:ecommerce_ai/const/images.dart';
+import 'package:ecommerce_ai/screens/cart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -71,6 +72,30 @@ class _DetailsScreenState extends State<DetailsScreen> {
           StringUtils.capitalize(widget.catID.toString().replaceAll(".", " "),
               allWords: true),
         ),
+        actions: [
+          GestureDetector(
+            onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const CartScreen())),
+            child: Stack(children: [
+              const Center(
+                child: Padding(
+                  padding: EdgeInsets.only(right: 15.0),
+                  child: Icon(
+                    Icons.add_shopping_cart_rounded,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+              Positioned(
+                  top: 7,
+                  right: 7.0,
+                  child: CartCountWidget(
+                      cartCounterText: Provider.of<EventProvider>(context)
+                          .cartCount
+                          .toString()))
+            ]),
+          ),
+        ],
       ),
       body: SafeArea(
         child: Stack(children: [
@@ -281,6 +306,13 @@ class _DetailsScreenState extends State<DetailsScreen> {
                     ),
                     GestureDetector(
                       onTap: () {
+                        Provider.of<EventProvider>(context, listen: false)
+                            .addToCart(
+                                productId: widget.pID,
+                                categoryId: widget.cID,
+                                categoryCode: widget.catID,
+                                price: widget.price,
+                                brand: widget.brand);
                         ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                                 duration: Duration(seconds: 1),
@@ -345,4 +377,32 @@ Widget csvDataView({required String title, required String data}) {
       ],
     ),
   );
+}
+
+class CartCountWidget extends StatelessWidget {
+  String cartCounterText;
+  CartCountWidget({required this.cartCounterText});
+
+  @override
+  Widget build(BuildContext context) {
+    return cartCounterText == "0"
+        ? Container()
+        : Container(
+            alignment: Alignment.center,
+            height: 20,
+            width: 20,
+            decoration: BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white)),
+            child: Text(
+              cartCounterText,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                  fontSize: 12,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold),
+            ),
+          );
+  }
 }
