@@ -1,22 +1,26 @@
 import 'package:basic_utils/basic_utils.dart';
 import 'package:ecommerce_ai/const/images.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../controller/event.dart';
 
 class DetailsScreen extends StatefulWidget {
   String selectedImage;
-  String title;
+  String catID;
   String pID;
   String cID;
-
+  double price;
   String brand;
   List<List<dynamic>> csvData;
 
   DetailsScreen(
       {super.key,
       required this.selectedImage,
-      required this.title,
+      required this.catID,
       required this.pID,
       required this.cID,
+      required this.price,
       required this.brand,
       required this.csvData});
 
@@ -63,7 +67,10 @@ class _DetailsScreenState extends State<DetailsScreen> {
         elevation: 0.5,
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
-        title: Text(widget.title),
+        title: Text(
+          StringUtils.capitalize(widget.catID.toString().replaceAll(".", " "),
+              allWords: true),
+        ),
       ),
       body: SafeArea(
         child: Stack(children: [
@@ -86,7 +93,9 @@ class _DetailsScreenState extends State<DetailsScreen> {
               Padding(
                 padding: const EdgeInsets.only(left: 15.0, right: 15.0),
                 child: Text(
-                  widget.title,
+                  StringUtils.capitalize(
+                      widget.catID.toString().replaceAll(".", " "),
+                      allWords: true),
                   maxLines: 2,
                   style: const TextStyle(
                       fontSize: 18,
@@ -107,6 +116,12 @@ class _DetailsScreenState extends State<DetailsScreen> {
                 ),
               ),
               const SizedBox(height: 15),
+              // _related.isEmpty
+              //     ? Container(
+              //         height: screenSize.height * 0.3,
+              //         child: Text("No Related"),
+              //       )
+              //     :
               GridView.builder(
                 shrinkWrap: true,
                 itemCount: _related.length,
@@ -124,13 +139,14 @@ class _DetailsScreenState extends State<DetailsScreen> {
                         builder: (context) => DetailsScreen(
                             selectedImage:
                                 images(_related[index][2].toString()),
-                            title: StringUtils.capitalize(
+                            catID: StringUtils.capitalize(
                                 _related[index][2]
                                     .toString()
                                     .replaceAll(".", " "),
                                 allWords: true),
                             brand: _related[index][3].toString(),
                             pID: _related[index][0].toString(),
+                            price: _related[index][4],
                             cID: _related[index][1].toString(),
                             csvData: _related))),
                     child: Card(
@@ -238,6 +254,13 @@ class _DetailsScreenState extends State<DetailsScreen> {
                     const SizedBox(width: 20),
                     GestureDetector(
                       onTap: () {
+                        Provider.of<EventProvider>(context, listen: false)
+                            .purchaseProduct(
+                                productId: widget.pID,
+                                categoryId: widget.cID,
+                                categoryCode: widget.catID,
+                                price: widget.price,
+                                brand: widget.brand);
                         ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                                 duration: Duration(seconds: 1),

@@ -1,8 +1,11 @@
 import 'package:basic_utils/basic_utils.dart';
 import 'package:csv/csv.dart';
+import 'package:ecommerce_ai/controller/event.dart';
+import 'package:ecommerce_ai/model/event.dart';
 import 'package:ecommerce_ai/screens/details.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 import '../const/images.dart';
 
@@ -61,6 +64,17 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         title: const Text("Products"),
+        actions: [
+          IconButton(
+              onPressed: () {
+                Provider.of<EventProvider>(context, listen: false)
+                    .event
+                    .forEach((element) {
+                  print(element);
+                });
+              },
+              icon: Icon(Icons.abc))
+        ],
       ),
       body: SafeArea(
           child: _filteredCsvData.isEmpty
@@ -83,20 +97,34 @@ class _HomePageState extends State<HomePage> {
                         ),
                         itemBuilder: (context, index) {
                           return GestureDetector(
-                            onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => DetailsScreen(
-                                    selectedImage: images(
-                                        _filteredCsvData[index][2].toString()),
-                                    title: StringUtils.capitalize(
-                                        _filteredCsvData[index][2]
-                                            .toString()
-                                            .replaceAll(".", " "),
-                                        allWords: true),
-                                    brand:
-                                        _filteredCsvData[index][3].toString(),
-                                    pID: _filteredCsvData[index][0].toString(),
-                                    cID: _filteredCsvData[index][1].toString(),
-                                    csvData: _filteredCsvData))),
+                            onTap: () {
+                              Provider.of<EventProvider>(context, listen: false)
+                                  .viewProduct(
+                                      productId:
+                                          _filteredCsvData[index][0].toString(),
+                                      categoryId:
+                                          _filteredCsvData[index][1].toString(),
+                                      categoryCode:
+                                          _filteredCsvData[index][2].toString(),
+                                      price: _filteredCsvData[index][4],
+                                      brand: _filteredCsvData[index][3]
+                                          .toString());
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => DetailsScreen(
+                                      selectedImage: images(
+                                          _filteredCsvData[index][2]
+                                              .toString()),
+                                      catID:
+                                          _filteredCsvData[index][2].toString(),
+                                      brand:
+                                          _filteredCsvData[index][3].toString(),
+                                      pID:
+                                          _filteredCsvData[index][0].toString(),
+                                      cID:
+                                          _filteredCsvData[index][1].toString(),
+                                      price: _filteredCsvData[index][4],
+                                      csvData: _filteredCsvData)));
+                            },
                             child: Card(
                               elevation: 0.5,
                               color: Colors.white,
