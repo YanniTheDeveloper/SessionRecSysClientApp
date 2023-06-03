@@ -12,6 +12,11 @@ class EventProvider with ChangeNotifier {
     return _cartItems.length;
   }
 
+  clearCart() {
+    _cartItems.clear();
+    notifyListeners();
+  }
+
   void viewProduct(
       {required String productId,
       required String categoryId,

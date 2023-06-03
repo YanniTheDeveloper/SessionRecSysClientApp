@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../const/images.dart';
+import 'cart.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -65,27 +66,28 @@ class _HomePageState extends State<HomePage> {
         foregroundColor: Colors.black,
         title: const Text("Products"),
         actions: [
-          // IconButton(
-          //     onPressed: () {
-          //       var events = [];
-          //       Provider.of<EventProvider>(context, listen: false)
-          //           .event
-          //           .forEach((element) {
-          //         events.add({
-          //           "productId": element.productId,
-          //           "categoryId": element.categoryId,
-          //           "categoryCode": element.categoryCode,
-          //           "eventType": element.eventType,
-          //           "price": element.price,
-          //           "brand": element.brand,
-          //           "eventTime": element.eventTime,
-          //           "userId": element.userId,
-          //           "userSession": element.userSession
-          //         });
-          //       });
-          //       print(events);
-          //     },
-          //     icon: Icon(Icons.abc))
+          GestureDetector(
+            onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const CartScreen())),
+            child: Stack(children: [
+              const Center(
+                child: Padding(
+                  padding: EdgeInsets.only(right: 15.0),
+                  child: Icon(
+                    Icons.add_shopping_cart_rounded,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+              Positioned(
+                  top: 7,
+                  right: 7.0,
+                  child: CartCountWidget(
+                      cartCounterText: Provider.of<EventProvider>(context)
+                          .cartCount
+                          .toString()))
+            ]),
+          ),
         ],
       ),
       body: SafeArea(

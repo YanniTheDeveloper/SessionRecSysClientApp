@@ -18,10 +18,41 @@ class _CartScreenState extends State<CartScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          elevation: 0.5,
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black,
-          title: const Text("Cart")),
+        elevation: 0.5,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        title: const Text("Cart"),
+        actions: [
+          GestureDetector(
+            onTap: () {
+              Provider.of<EventProvider>(context, listen: false).clearCart();
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  duration: Duration(seconds: 2),
+                  backgroundColor: Colors.green,
+                  content: Text("Products have been purchased.")));
+              Navigator.of(context).pop(context);
+            },
+            child: Padding(
+              padding:
+                  const EdgeInsets.only(top: 10.0, bottom: 10.0, right: 10),
+              child: Container(
+                width: 100,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                    color: Colors.red.shade300,
+                    borderRadius: BorderRadius.circular(15.0)),
+                child: const Text(
+                  "Checkout",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16),
+                ),
+              ),
+            ),
+          )
+        ],
+      ),
       body: Consumer<EventProvider>(
         builder: (context, value, _) {
           return ListView.builder(

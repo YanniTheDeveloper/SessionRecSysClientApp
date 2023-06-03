@@ -32,21 +32,23 @@ class DetailsScreen extends StatefulWidget {
 class _DetailsScreenState extends State<DetailsScreen> {
   final List<List<dynamic>> _related = [];
   getRelated() {
-    for (int i = 0; i < widget.csvData.length; i++) {
-      if (widget.brand.toString() == widget.csvData[i][3].toString()) {
-        bool isAlreadyAdded = false;
-        for (var relatedData in _related) {
-          if (widget.csvData[i][2].toString() == relatedData[2].toString()) {
-            isAlreadyAdded = true;
-            break;
-          }
-        }
-        if (!isAlreadyAdded) {
-          if (widget.pID.toString() != widget.csvData[i][0].toString()) {
-            _related.add(widget.csvData[i]);
-          }
-        }
-      }
+    for (int i = 0; i < 35; i++) {
+      _related.add(widget.csvData[i]);
+
+      // if (widget.brand.toString() == widget.csvData[i][3].toString()) {
+      //   bool isAlreadyAdded = false;
+      //   for (var relatedData in _related) {
+      //     if (widget.csvData[i][2].toString() == relatedData[2].toString()) {
+      //       isAlreadyAdded = true;
+      //       break;
+      //     }
+      //   }
+      //   if (!isAlreadyAdded) {
+      //     if (widget.pID.toString() != widget.csvData[i][0].toString()) {
+      //       _related.add(widget.csvData[i]);
+      //     }
+      //   }
+      // }
     }
 
     setState(() {});
@@ -235,22 +237,22 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
-                                  Container(
-                                    height: 22,
-                                    width: 50,
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                        color: Colors.indigo,
-                                        borderRadius:
-                                            BorderRadius.circular(5.0)),
-                                    child: const Text(
-                                      " 3.0",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                  )
+                                  // Container(
+                                  //   height: 22,
+                                  //   width: 50,
+                                  //   alignment: Alignment.center,
+                                  //   decoration: BoxDecoration(
+                                  //       color: Colors.indigo,
+                                  //       borderRadius:
+                                  //           BorderRadius.circular(5.0)),
+                                  //   child: const Text(
+                                  //     " 3.0",
+                                  //     style: TextStyle(
+                                  //         color: Colors.white,
+                                  //         fontSize: 13,
+                                  //         fontWeight: FontWeight.w600),
+                                  //   ),
+                                  // )
                                 ],
                               ),
                             )
@@ -280,6 +282,33 @@ class _DetailsScreenState extends State<DetailsScreen> {
                     GestureDetector(
                       onTap: () {
                         Provider.of<EventProvider>(context, listen: false)
+                            .addToCart(
+                                productId: widget.pID,
+                                categoryId: widget.cID,
+                                categoryCode: widget.catID,
+                                price: widget.price,
+                                brand: widget.brand);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                duration: Duration(seconds: 1),
+                                backgroundColor: Colors.green,
+                                content: Text("Added To Cart!")));
+                      },
+                      child: Container(
+                        height: 56,
+                        width: screenSize.width * 0.3,
+                        alignment: Alignment.center,
+                        color: Colors.red,
+                        child: const Text(
+                          "Add To Cart",
+                          style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Provider.of<EventProvider>(context, listen: false)
                             .purchaseProduct(
                                 productId: widget.pID,
                                 categoryId: widget.cID,
@@ -304,33 +333,6 @@ class _DetailsScreenState extends State<DetailsScreen> {
                         ),
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        Provider.of<EventProvider>(context, listen: false)
-                            .addToCart(
-                                productId: widget.pID,
-                                categoryId: widget.cID,
-                                categoryCode: widget.catID,
-                                price: widget.price,
-                                brand: widget.brand);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                duration: Duration(seconds: 1),
-                                backgroundColor: Colors.green,
-                                content: Text("Added To Cart!")));
-                      },
-                      child: Container(
-                        height: 56,
-                        width: screenSize.width * 0.3,
-                        alignment: Alignment.center,
-                        color: Colors.red,
-                        child: const Text(
-                          "Add To Cart",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w500),
-                        ),
-                      ),
-                    )
                   ],
                 ),
               ))
