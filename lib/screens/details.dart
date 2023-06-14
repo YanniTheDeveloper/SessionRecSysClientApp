@@ -1,5 +1,6 @@
 import 'package:basic_utils/basic_utils.dart';
 import 'package:ecommerce_ai/const/images.dart';
+import 'package:ecommerce_ai/model/product.dart';
 import 'package:ecommerce_ai/screens/cart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -13,7 +14,7 @@ class DetailsScreen extends StatefulWidget {
   String cID;
   double price;
   String brand;
-  List<List<dynamic>> csvData;
+  List<Product> csvData;
 
   DetailsScreen(
       {super.key,
@@ -30,9 +31,9 @@ class DetailsScreen extends StatefulWidget {
 }
 
 class _DetailsScreenState extends State<DetailsScreen> {
-  final List<List<dynamic>> _related = [];
+  final List<Product> _related = [];
   getRelated() {
-    for (int i = 0; i < 35; i++) {
+    for (int i = 0; i < 10; i++) {
       _related.add(widget.csvData[i]);
 
       // if (widget.brand.toString() == widget.csvData[i][3].toString()) {
@@ -164,17 +165,16 @@ class _DetailsScreenState extends State<DetailsScreen> {
                   return GestureDetector(
                     onTap: () => Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => DetailsScreen(
-                            selectedImage:
-                                images(_related[index][2].toString()),
+                            selectedImage: images(_related[index].categoryCode),
                             catID: StringUtils.capitalize(
-                                _related[index][2]
-                                    .toString()
+                                _related[index]
+                                    .categoryCode
                                     .replaceAll(".", " "),
                                 allWords: true),
-                            brand: _related[index][3].toString(),
-                            pID: _related[index][0].toString(),
-                            price: _related[index][4],
-                            cID: _related[index][1].toString(),
+                            brand: _related[index].brand,
+                            pID: _related[index].productId,
+                            price: _related[index].price,
+                            cID: _related[index].categoryId,
                             csvData: _related))),
                     child: Card(
                       elevation: 0.5,
@@ -186,7 +186,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            images(_related[index][2].toString()) == ""
+                            images(_related[index].categoryCode) == ""
                                 ? const AspectRatio(
                                     aspectRatio: 1.175,
                                     child: Center(child: Text("No Image")))
@@ -199,8 +199,8 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                               topRight: Radius.circular(10.0)),
                                           image: DecorationImage(
                                               image: AssetImage(images(
-                                                  _related[index][2]
-                                                      .toString())),
+                                                  _related[index]
+                                                      .categoryCode)),
                                               fit: BoxFit.cover)),
                                     ),
                                   ),
@@ -210,8 +210,8 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                   const EdgeInsets.only(left: 8.0, right: 8.0),
                               child: Text(
                                 StringUtils.capitalize(
-                                    _related[index][2]
-                                        .toString()
+                                    _related[index]
+                                        .categoryCode
                                         .replaceAll(".", " "),
                                     allWords: true),
                                 maxLines: 2,
@@ -231,7 +231,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Text(
-                                    "\$ ${_related[index][4].toString()}",
+                                    "\$ ${_related[index].categoryCode}",
                                     style: const TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w500,
