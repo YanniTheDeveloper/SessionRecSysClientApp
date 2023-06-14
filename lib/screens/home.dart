@@ -1,7 +1,11 @@
+import 'dart:math';
+
 import 'package:basic_utils/basic_utils.dart';
 import 'package:csv/csv.dart';
 import 'package:ecommerce_ai/controller/event.dart';
+import 'package:ecommerce_ai/data/csv_db.dart';
 import 'package:ecommerce_ai/model/event.dart';
+import 'package:ecommerce_ai/model/product.dart';
 import 'package:ecommerce_ai/screens/details.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,41 +22,17 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<List<dynamic>> _csvData = [];
-  List<List<dynamic>> _filteredCsvData = [];
+  List<Product> products = List.empty(growable: true);
 
-  Future<void> readCSVFile() async {
-    final String csvData = await rootBundle.loadString('assets/a.csv');
-    final List<List<dynamic>> rowsAsListOfValues =
-        const CsvToListConverter().convert(csvData);
-
-    // Define a set to store unique category codes
-    Set<String> uniqueCategoryCodes = Set<String>();
-
-    // Iterate through the rows
-    for (int i = 0; i < rowsAsListOfValues.length; i++) {
-      List<dynamic> row = rowsAsListOfValues[i];
-      String categoryCode = row[2]
-          .toString(); // Assuming category_code is in the third column (index 2)
-
-      // Check if the category code is already present
-      if (!uniqueCategoryCodes.contains(categoryCode)) {
-        // Add the row to the non-redundant data
-        _filteredCsvData.add(row);
-
-        // Add the category code to the set
-        uniqueCategoryCodes.add(categoryCode);
-      }
-    }
-
-    _csvData = rowsAsListOfValues;
-    _filteredCsvData.removeAt(0);
+  Future<void> loadProducts() async {
+    products = CsvDatabase.instance.getRandomProducts(50);
+    print("Size: ${products.length}");
     setState(() {});
   }
 
   @override
   void initState() {
-    readCSVFile();
+    loadProducts();
     super.initState();
   }
 
@@ -91,7 +71,7 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       body: SafeArea(
-          child: _filteredCsvData.isEmpty
+          child: products.isEmpty
               ? const Center(child: Text("Loading"))
               : SingleChildScrollView(
                   child: Column(
@@ -99,7 +79,7 @@ class _HomePageState extends State<HomePage> {
                       const SizedBox(height: 20),
                       GridView.builder(
                         shrinkWrap: true,
-                        itemCount: _filteredCsvData.length,
+                        itemCount: products.length,
                         physics: const BouncingScrollPhysics(),
                         scrollDirection: Axis.vertical,
                         padding: const EdgeInsets.only(bottom: 60),
@@ -114,30 +94,22 @@ class _HomePageState extends State<HomePage> {
                             onTap: () {
                               Provider.of<EventProvider>(context, listen: false)
                                   .viewProduct(
-                                      productId:
-                                          _filteredCsvData[index][0].toString(),
-                                      categoryId:
-                                          _filteredCsvData[index][1].toString(),
-                                      categoryCode:
-                                          _filteredCsvData[index][2].toString(),
-                                      price: _filteredCsvData[index][4],
-                                      brand: _filteredCsvData[index][3]
-                                          .toString());
+                                productId: products[index].productId,
+                                categoryId: products[index].categoryId,
+                                categoryCode: products[index].categoryCode,
+                                price: products[index].price,
+                                brand: products[index].brand,
+                              );
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => DetailsScreen(
-                                      selectedImage: images(
-                                          _filteredCsvData[index][2]
-                                              .toString()),
-                                      catID:
-                                          _filteredCsvData[index][2].toString(),
-                                      brand:
-                                          _filteredCsvData[index][3].toString(),
-                                      pID:
-                                          _filteredCsvData[index][0].toString(),
-                                      cID:
-                                          _filteredCsvData[index][1].toString(),
-                                      price: _filteredCsvData[index][4],
-                                      csvData: _filteredCsvData)));
+                                      selectedImage:
+                                          images(products[index].categoryCode),
+                                      catID: products[index].categoryCode,
+                                      brand: products[index].brand,
+                                      pID: products[index].productId,
+                                      cID: products[index].categoryId,
+                                      price: products[index].price,
+                                      csvData: products)));
                             },
                             child: Card(
                               elevation: 0.5,
@@ -149,9 +121,7 @@ class _HomePageState extends State<HomePage> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    images(_filteredCsvData[index][2]
-                                                .toString()) ==
-                                            ""
+                                    images(products[index].categoryCode) == ""
                                         ? const AspectRatio(
                                             aspectRatio: 1.175,
                                             child:
@@ -171,9 +141,8 @@ class _HomePageState extends State<HomePage> {
                                                                   10.0)),
                                                   image: DecorationImage(
                                                       image: AssetImage(images(
-                                                          _filteredCsvData[
-                                                                  index][2]
-                                                              .toString())),
+                                                          products[index]
+                                                              .categoryCode)),
                                                       fit: BoxFit.cover)),
                                             ),
                                           ),
@@ -183,8 +152,8 @@ class _HomePageState extends State<HomePage> {
                                           left: 8.0, right: 8.0),
                                       child: Text(
                                         StringUtils.capitalize(
-                                            _filteredCsvData[index][2]
-                                                .toString()
+                                            products[index]
+                                                .categoryCode
                                                 .replaceAll(".", " "),
                                             allWords: true),
                                         maxLines: 2,
@@ -205,7 +174,7 @@ class _HomePageState extends State<HomePage> {
                                             CrossAxisAlignment.center,
                                         children: [
                                           Text(
-                                            "\$ ${_filteredCsvData[index][4].toString()}",
+                                            "\$ ${products[index].categoryCode}",
                                             style: const TextStyle(
                                               fontSize: 15,
                                               fontWeight: FontWeight.w500,
