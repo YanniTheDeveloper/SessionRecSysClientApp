@@ -1,8 +1,6 @@
-import 'dart:ffi';
 
 import 'package:basic_utils/basic_utils.dart' as st;
 import 'package:ecommerce_ai/controller/event.dart';
-import 'package:ecommerce_ai/model/event.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

@@ -1,4 +1,5 @@
 import 'package:csv/csv.dart';
+import 'package:ecommerce_ai/data/api.dart';
 import 'package:ecommerce_ai/model/product.dart';
 import 'package:flutter/services.dart';
 
@@ -41,7 +42,26 @@ class CsvDatabase {
         .toList();
   }
 
-// get product by id
+  /////////////////////////////////////////
+  ///
+  ///
+  ///  this is what i use for api and return to the flutter page
+
+  List<Product> getProductFromApi(List<dynamic> ids) {
+    List<Product> matchProducts = [];
+    for (int i = 0; i < _allProducts.length; i++) {
+      for (int j = 0; j < ids.length; j++) {
+        if (_allProducts[i].productId == ids[j].toString()) {
+          matchProducts.add(_allProducts[i]);
+        }
+      }
+    }
+    //print(matchProducts);
+    return matchProducts;
+  }
+
+  /////////////////////////////////////////////
+  // get product by id
   Product getProductById(String id) {
     return _allProducts.firstWhere((product) => product.productId == id);
   }

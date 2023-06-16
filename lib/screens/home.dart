@@ -1,14 +1,10 @@
-import 'dart:math';
-
 import 'package:basic_utils/basic_utils.dart';
-import 'package:csv/csv.dart';
 import 'package:ecommerce_ai/controller/event.dart';
+import 'package:ecommerce_ai/data/api.dart';
 import 'package:ecommerce_ai/data/csv_db.dart';
-import 'package:ecommerce_ai/model/event.dart';
 import 'package:ecommerce_ai/model/product.dart';
 import 'package:ecommerce_ai/screens/details.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../const/images.dart';
@@ -25,14 +21,24 @@ class _HomePageState extends State<HomePage> {
   List<Product> products = List.empty(growable: true);
 
   Future<void> loadProducts() async {
-    products = CsvDatabase.instance.getRandomProducts(50);
+    // Id that comes from an API
+    final response = await ApiProvider().fetchData();
+    /////////////////////////////////
+
+    // print(response);
+
+    products = CsvDatabase.instance.getProductFromApi(response);
+
     print("Size: ${products.length}");
+
+    //print(data);
     setState(() {});
   }
 
   @override
   void initState() {
     loadProducts();
+    // lId();
     super.initState();
   }
 
