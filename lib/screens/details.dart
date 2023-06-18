@@ -288,6 +288,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                 categoryCode: widget.catID,
                                 price: widget.price,
                                 brand: widget.brand);
+                        EventProvider().extractEventData();
                         ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                                 duration: Duration(seconds: 1),
@@ -315,6 +316,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                 categoryCode: widget.catID,
                                 price: widget.price,
                                 brand: widget.brand);
+                        EventProvider().extractEventData();
                         ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                                 duration: Duration(seconds: 1),

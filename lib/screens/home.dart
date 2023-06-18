@@ -20,18 +20,16 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<Product> products = List.empty(growable: true);
 
+  EventProvider eventProvider = EventProvider();
+
   Future<void> loadProducts() async {
     // Id that comes from an API
     final response = await ApiProvider().fetchData();
-    /////////////////////////////////
-
-    // print(response);
 
     products = CsvDatabase.instance.getProductFromApi(response);
 
     print("Size: ${products.length}");
 
-    //print(data);
     setState(() {});
   }
 
@@ -42,9 +40,18 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   }
 
+  String? _dropDownValue;
+
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
+
+    // List<dynamic> _aiModels = [
+    //   'ALBERT',
+    //   'LSTM',
+    //   'GRU',
+    // ];
+
     return Scaffold(
       appBar: AppBar(
         elevation: 0.5,
@@ -74,6 +81,29 @@ class _HomePageState extends State<HomePage> {
                           .toString()))
             ]),
           ),
+
+          DropdownButton<String>(
+            value: _dropDownValue,
+            icon: Icon(Icons.bubble_chart_outlined),
+            items: <String>['ALBERT', 'LSTM', 'GRU'].map((String val) {
+              return DropdownMenuItem<String>(
+                value: val,
+                child: Text(
+                  val,
+                  style: TextStyle(
+                    color: Colors.black,
+                  ),
+                ),
+              );
+            }).toList(),
+            onChanged: (dynamic newValue) {
+              setState(() {
+                _dropDownValue = newValue;
+              });
+            },
+          )
+
+          //
         ],
       ),
       body: SafeArea(
@@ -106,6 +136,9 @@ class _HomePageState extends State<HomePage> {
                                 price: products[index].price,
                                 brand: products[index].brand,
                               );
+                           
+                          
+                              // EventProvider().event.toString();
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => DetailsScreen(
                                       selectedImage:
@@ -116,6 +149,7 @@ class _HomePageState extends State<HomePage> {
                                       cID: products[index].categoryId,
                                       price: products[index].price,
                                       csvData: products)));
+                              EventProvider().extractEventData();
                             },
                             child: Card(
                               elevation: 0.5,
