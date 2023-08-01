@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../controller/event.dart';
 
+// ignore: must_be_immutable
 class DetailsScreen extends StatefulWidget {
   String selectedImage;
   String catID;
@@ -383,6 +384,7 @@ Widget csvDataView({required String title, required String data}) {
   );
 }
 
+// ignore: must_be_immutable
 class CartCountWidget extends StatelessWidget {
   String cartCounterText;
   CartCountWidget({required this.cartCounterText});

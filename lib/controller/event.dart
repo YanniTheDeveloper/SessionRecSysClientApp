@@ -20,7 +20,8 @@ class EventProvider with ChangeNotifier {
   }
 
   void extractEventData() {
-    List<Map<String, dynamic>> eventDataList = [];
+    // List<Map<String, dynamic>> eventDataList = [];
+    Map<String, dynamic> eventData = {};
 
     for (Event eve in _events) {
       String productId = eve.productId;
@@ -31,22 +32,24 @@ class EventProvider with ChangeNotifier {
       DateTime eventTime = eve.eventTime;
       double price = eve.price;
 
-      Map<String, dynamic> eventData = {
-        'productId': productId,
-        'categoryId': categoryId,
-        'categoryCode': categoryCode,
+      eventData = {
+        'product_id': productId,
+        'category_id': categoryId,
+        'category_code': categoryCode,
         'brand': brand,
-        'eventType': eventType.toString(),
-        'eventTime': eventTime.toString(),
+        'event_type': eventType.toString(),
+        'event_time': eventTime.toString(),
         'price': price,
       };
-      eventDataList.add(eventData);
+      // eventDataList.add(eventData);
       // eventDataList.add(eventData);
 
-      print("something");
-
-      print(eventData);
+      // ApiProvider().sendDataToServer(eventData);
     }
+    // print("something");
+    print(eventData);
+    // print(eventDataList);
+    ApiProvider().sendDataToServer(eventData);
   }
 
   void viewProduct({
@@ -99,7 +102,7 @@ class EventProvider with ChangeNotifier {
       required double price,
       required String brand}) {
     _cartItems.removeAt(index);
-    print("this isssssssssssss ${event.length}");
+    // print("this isssssssssssss ${event.length}");
 
     notifyListeners();
     _events.add(Event(
@@ -111,7 +114,7 @@ class EventProvider with ChangeNotifier {
         eventTime: DateTime.now(),
         price: price));
     EventProvider().extractEventData();
-    print("hhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
+    // print("hhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
   }
 
   addToCart(

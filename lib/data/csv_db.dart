@@ -1,5 +1,4 @@
 import 'package:csv/csv.dart';
-import 'package:ecommerce_ai/data/api.dart';
 import 'package:ecommerce_ai/model/product.dart';
 import 'package:flutter/services.dart';
 

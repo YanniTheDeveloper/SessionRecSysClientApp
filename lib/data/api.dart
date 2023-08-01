@@ -5,7 +5,7 @@ class ApiProvider {
 //   //List<dynamic> data = [];
 
   Future<dynamic> fetchData() async {
-    var url = Uri.parse('http://backendsession.onrender.com/getid');
+    var url = Uri.parse('http://623a-35-229-79-110.ngrok-free.app/getid');
     var response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -18,22 +18,32 @@ class ApiProvider {
     }
   }
 
-  Future<dynamic> postData(Map<String, dynamic> selectedEvent) async {
-  var url = Uri.parse('http://backendsession.onrender.com/event');
+  Future<dynamic> sendDataToServer(Map<String, dynamic> requestData) async {
+    String serverUrl = 'https://623a-35-229-79-110.ngrok-free.app/event';
+    try {
+      String jsonData = jsonEncode(requestData);
 
-  // var headers = <String, String>{
-  //   'Content-Type': 'application/json',
-  // };
+      Map<String, String> headers = {
+        'Content-Type': 'application/json',
+      };
 
-  var response = await http.post(url, body: selectedEvent);
+      http.Response response = await http.post(
+        Uri.parse(serverUrl),
+        headers: headers,
+        body: jsonData,
+      );
 
-  if (response.statusCode == 200) {
-    print('POST request successful');
-    print(response.body);
-  } else {
-    print('POST request failed');
+      if (response.statusCode == 200) {
+        print('Event data sent to the server successfully');
+        print('Response body: ${response.body}');
+        // print(response.body);
+      } else {
+        print(
+            'Failed to send event data. Response status: ${response.statusCode}');
+        // print('Response body: ${response.body}');
+      }
+    } catch (e) {
+      print('Error occurred while sending event data: $e');
+    }
   }
 }
-}
-
-
