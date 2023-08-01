@@ -23,7 +23,7 @@ class _CartScreenState extends State<CartScreen> {
           GestureDetector(
             onTap: () {
               Provider.of<EventProvider>(context, listen: false).clearCart();
-              EventProvider().extractEventData();
+              // EventProvider().extractEventData();
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                   duration: Duration(seconds: 2),
                   backgroundColor: Colors.green,
