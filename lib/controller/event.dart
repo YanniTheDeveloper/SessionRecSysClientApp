@@ -19,7 +19,7 @@ class EventProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void extractEventData() {
+  Future<dynamic> extractEventData() async {
     // List<Map<String, dynamic>> eventDataList = [];
     Map<String, dynamic> eventData = {};
 
@@ -47,9 +47,13 @@ class EventProvider with ChangeNotifier {
       // ApiProvider().sendDataToServer(eventData);
     }
     // print("something");
-    print(eventData);
+    // print(eventData);
     // print(eventDataList);
-    ApiProvider().sendDataToServer(eventData);
+    // ApiProvider().sendDataToServer(eventData);
+    // dynamic responseData = ApiProvider().sendDataToServer(eventData);
+    dynamic responseData = await ApiProvider().sendDataToServer(eventData);
+    // print(responseData);
+    return responseData;
   }
 
   void viewProduct({

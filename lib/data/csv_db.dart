@@ -14,10 +14,10 @@ class CsvDatabase {
 
     final rows = const CsvToListConverter().convert(csvData, eol: "\n");
 
-    print("Rows Size: ${rows.length}, of row sub list size: ${rows[0].length}");
+    // print("Rows Size: ${rows.length}, of row sub list size: ${rows[0].length}");
     _allProducts = await Future.value(
         rows.skip(1).map((row) => Product.fromRow(row)).toList());
-    print("All Products Size: ${_allProducts.length}");
+    // print("All Products Size: ${_allProducts.length}");
   }
 
   // get random products
