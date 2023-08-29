@@ -14,10 +14,10 @@ class CsvDatabase {
 
     final rows = const CsvToListConverter().convert(csvData, eol: "\n");
 
-    print("Rows Size: ${rows.length}, of row sub list size: ${rows[0].length}");
+    // print("Rows Size: ${rows.length}, of row sub list size: ${rows[0].length}");
     _allProducts = await Future.value(
         rows.skip(1).map((row) => Product.fromRow(row)).toList());
-    print("All Products Size: ${_allProducts.length}");
+    // print("All Products Size: ${_allProducts.length}");
   }
 
   // get random products
@@ -41,7 +41,26 @@ class CsvDatabase {
         .toList();
   }
 
-// get product by id
+  /////////////////////////////////////////
+  ///
+  ///
+  ///  this is what i use for api and return to the flutter page
+
+  List<Product> getProductFromApi(List<dynamic> ids) {
+    List<Product> matchProducts = [];
+    for (int i = 0; i < _allProducts.length; i++) {
+      for (int j = 0; j < ids.length; j++) {
+        if (_allProducts[i].productId == ids[j].toString()) {
+          matchProducts.add(_allProducts[i]);
+        }
+      }
+    }
+    //print(matchProducts);
+    return matchProducts;
+  }
+
+  /////////////////////////////////////////////
+  // get product by id
   Product getProductById(String id) {
     return _allProducts.firstWhere((product) => product.productId == id);
   }

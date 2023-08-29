@@ -1,8 +1,5 @@
-import 'dart:ffi';
-
 import 'package:basic_utils/basic_utils.dart' as st;
 import 'package:ecommerce_ai/controller/event.dart';
-import 'package:ecommerce_ai/model/event.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -26,11 +23,13 @@ class _CartScreenState extends State<CartScreen> {
           GestureDetector(
             onTap: () {
               Provider.of<EventProvider>(context, listen: false).clearCart();
+              // EventProvider().extractEventData();
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                   duration: Duration(seconds: 2),
                   backgroundColor: Colors.green,
                   content: Text("Products have been purchased.")));
               Navigator.of(context).pop(context);
+              EventProvider().extractEventData();
             },
             child: Padding(
               padding:
@@ -79,6 +78,7 @@ class _CartScreenState extends State<CartScreen> {
                             categoryCode: value.cartItem[index].categoryCode,
                             price: value.cartItem[index].price,
                             brand: value.cartItem[index].brand);
+                        EventProvider().extractEventData();
                       },
                       child: const Icon(Icons.delete, color: Colors.red)),
                 ),

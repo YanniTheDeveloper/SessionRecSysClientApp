@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../controller/event.dart';
 
+// ignore: must_be_immutable
 class DetailsScreen extends StatefulWidget {
   String selectedImage;
   String catID;
@@ -288,6 +289,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                 categoryCode: widget.catID,
                                 price: widget.price,
                                 brand: widget.brand);
+                        EventProvider().extractEventData();
                         ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                                 duration: Duration(seconds: 1),
@@ -315,6 +317,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                 categoryCode: widget.catID,
                                 price: widget.price,
                                 brand: widget.brand);
+                        EventProvider().extractEventData();
                         ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                                 duration: Duration(seconds: 1),
@@ -381,6 +384,7 @@ Widget csvDataView({required String title, required String data}) {
   );
 }
 
+// ignore: must_be_immutable
 class CartCountWidget extends StatelessWidget {
   String cartCounterText;
   CartCountWidget({required this.cartCounterText});
