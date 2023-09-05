@@ -1,5 +1,7 @@
 import 'package:basic_utils/basic_utils.dart';
 import 'package:ecommerce_ai/const/images.dart';
+import 'package:ecommerce_ai/data/api.dart';
+import 'package:ecommerce_ai/data/csv_db.dart';
 import 'package:ecommerce_ai/model/product.dart';
 import 'package:ecommerce_ai/screens/cart.dart';
 import 'package:flutter/material.dart';
@@ -32,10 +34,12 @@ class DetailsScreen extends StatefulWidget {
 }
 
 class _DetailsScreenState extends State<DetailsScreen> {
-  final List<Product> _related = [];
+  List<Product> _related = [];
+
   getRelated() {
-    for (int i = 0; i < 10; i++) {
-      _related.add(widget.csvData[i]);
+    for (int i = 0; i < 1; i++) {
+      loadProductsApi();
+      // _related.add(widget.csvData[i]);
 
       // if (widget.brand.toString() == widget.csvData[i][3].toString()) {
       //   bool isAlreadyAdded = false;
@@ -54,6 +58,35 @@ class _DetailsScreenState extends State<DetailsScreen> {
     }
 
     setState(() {});
+  }
+
+  bool _isLoading = false;
+  bool _isDataLoaded = false;
+
+  Future<void> loadProductsApi() async {
+    // if (_isLoading) return;
+    if (_isLoading || _isDataLoaded) return;
+    setState(() {
+      _isLoading = true;
+    });
+
+    // Id that comes from an API
+    final response = listo;
+    // print("=========== ${response}");
+
+    _related = CsvDatabase.instance.getProductFromApi(response);
+    // print(products_from_api);
+
+    // print("Size: ${products_from_api.length}");
+
+    // setState(() {});
+    setState(() {
+      _related.addAll(_related);
+      // products.remove(products_from_api);
+      _isDataLoaded = true;
+      _isLoading = false;
+    });
+    response.remove(listo);
   }
 
   @override
@@ -144,124 +177,144 @@ class _DetailsScreenState extends State<DetailsScreen> {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
                 ),
               ),
-              const SizedBox(height: 15),
-              // _related.isEmpty
-              //     ? Container(
-              //         height: screenSize.height * 0.3,
-              //         child: Text("No Related"),
-              //       )
-              //     :
-              GridView.builder(
-                shrinkWrap: true,
-                itemCount: _related.length,
-                physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.only(bottom: 60),
-                scrollDirection: Axis.vertical,
-                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                    childAspectRatio: 0.79,
-                    maxCrossAxisExtent: screenSize.width * 0.5,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10),
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => DetailsScreen(
-                            selectedImage: images(_related[index].categoryCode),
-                            catID: StringUtils.capitalize(
-                                _related[index]
-                                    .categoryCode
-                                    .replaceAll(".", " "),
-                                allWords: true),
-                            brand: _related[index].brand,
-                            pID: _related[index].productId,
-                            price: _related[index].price,
-                            cID: _related[index].categoryId,
-                            csvData: _related))),
-                    child: Card(
-                      elevation: 0.5,
-                      color: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+              NotificationListener<ScrollNotification>(
+                  onNotification: (ScrollNotification scrollInfo) {
+                    if (!_isLoading &&
+                        scrollInfo.metrics.pixels ==
+                            scrollInfo.metrics.maxScrollExtent) {
+                      // Fetch new data when the user reaches the bottom.
+                      loadProductsApi();
+                      return true;
+                    }
+                    return false;
+                  },
+                  child: const SizedBox(height: 15)),
+              _related.isEmpty
+                  ? Container(
+                      height: screenSize.height * 0.3,
+                      child: const Center(
+                        child: Text("There is No Related Product"),
                       ),
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            images(_related[index].categoryCode) == ""
-                                ? const AspectRatio(
-                                    aspectRatio: 1.175,
-                                    child: Center(child: Text("No Image")))
-                                : AspectRatio(
-                                    aspectRatio: 1.175,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          borderRadius: const BorderRadius.only(
-                                              topLeft: Radius.circular(10),
-                                              topRight: Radius.circular(10.0)),
-                                          image: DecorationImage(
-                                              image: AssetImage(images(
-                                                  _related[index]
-                                                      .categoryCode)),
-                                              fit: BoxFit.cover)),
-                                    ),
-                                  ),
-                            const SizedBox(height: 5),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 8.0, right: 8.0),
-                              child: Text(
-                                StringUtils.capitalize(
-                                    _related[index]
-                                        .categoryCode
-                                        .replaceAll(".", " "),
-                                    allWords: true),
-                                maxLines: 2,
-                                style: const TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w500,
-                                    overflow: TextOverflow.ellipsis),
-                              ),
+                    )
+                  : GridView.builder(
+                      shrinkWrap: true,
+                      itemCount: _related.length,
+                      physics: const BouncingScrollPhysics(),
+                      padding: const EdgeInsets.only(bottom: 60),
+                      scrollDirection: Axis.vertical,
+                      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                          childAspectRatio: 0.79,
+                          maxCrossAxisExtent: screenSize.width * 0.5,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10),
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) => DetailsScreen(
+                                      selectedImage:
+                                          images(_related[index].categoryCode),
+                                      catID: StringUtils.capitalize(
+                                          _related[index]
+                                              .categoryCode
+                                              .replaceAll(".", " "),
+                                          allWords: true),
+                                      brand: _related[index].brand,
+                                      pID: _related[index].productId,
+                                      price: _related[index].price,
+                                      cID: _related[index].categoryId,
+                                      csvData: _related))),
+                          child: Card(
+                            elevation: 0.5,
+                            color: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                            const SizedBox(height: 5),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 8.0, right: 8.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.center,
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    "\$ ${_related[index].categoryCode}",
-                                    style: const TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w500,
+                                  images(_related[index].categoryCode) == ""
+                                      ? const AspectRatio(
+                                          aspectRatio: 1.175,
+                                          child:
+                                              Center(child: Text("No Image")))
+                                      : AspectRatio(
+                                          aspectRatio: 1.175,
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    const BorderRadius.only(
+                                                        topLeft:
+                                                            Radius.circular(10),
+                                                        topRight:
+                                                            Radius.circular(
+                                                                10.0)),
+                                                image: DecorationImage(
+                                                    image: AssetImage(images(
+                                                        _related[index]
+                                                            .categoryCode)),
+                                                    fit: BoxFit.cover)),
+                                          ),
+                                        ),
+                                  const SizedBox(height: 5),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 8.0, right: 8.0),
+                                    child: Text(
+                                      StringUtils.capitalize(
+                                          _related[index]
+                                              .categoryCode
+                                              .replaceAll(".", " "),
+                                          allWords: true),
+                                      maxLines: 2,
+                                      style: const TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w500,
+                                          overflow: TextOverflow.ellipsis),
                                     ),
                                   ),
-                                  // Container(
-                                  //   height: 22,
-                                  //   width: 50,
-                                  //   alignment: Alignment.center,
-                                  //   decoration: BoxDecoration(
-                                  //       color: Colors.indigo,
-                                  //       borderRadius:
-                                  //           BorderRadius.circular(5.0)),
-                                  //   child: const Text(
-                                  //     " 3.0",
-                                  //     style: TextStyle(
-                                  //         color: Colors.white,
-                                  //         fontSize: 13,
-                                  //         fontWeight: FontWeight.w600),
-                                  //   ),
-                                  // )
-                                ],
-                              ),
-                            )
-                          ]),
+                                  const SizedBox(height: 5),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 8.0, right: 8.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          "\$ ${_related[index].categoryCode}",
+                                          style: const TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        // Container(
+                                        //   height: 22,
+                                        //   width: 50,
+                                        //   alignment: Alignment.center,
+                                        //   decoration: BoxDecoration(
+                                        //       color: Colors.indigo,
+                                        //       borderRadius:
+                                        //           BorderRadius.circular(5.0)),
+                                        //   child: const Text(
+                                        //     " 3.0",
+                                        //     style: TextStyle(
+                                        //         color: Colors.white,
+                                        //         fontSize: 13,
+                                        //         fontWeight: FontWeight.w600),
+                                        //   ),
+                                        // )
+                                      ],
+                                    ),
+                                  )
+                                ]),
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
             ]),
           ),
           Positioned(
@@ -295,6 +348,9 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                 duration: Duration(seconds: 1),
                                 backgroundColor: Colors.green,
                                 content: Text("Added To Cart!")));
+                        setState(() {
+                          _isDataLoaded = false;
+                        });
                       },
                       child: Container(
                         height: 56,
